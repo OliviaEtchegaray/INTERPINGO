@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INTERMIAU CRONOGRAMA</title>
+    <title>Organizador de Evento</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -329,7 +329,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        let tasksRef = null;
+        
+        let globalDocRef = null;
         const statusEl = document.getElementById('sync-status');
 
         window.updateUITaskState = (taskId, isChecked) => {
@@ -348,21 +349,21 @@
             // Actualización optimista (inmediata en la pantalla)
             window.updateUITaskState(taskId, isChecked);
 
-            if (!tasksRef || !auth.currentUser) return;
+            if (!globalDocRef || !auth.currentUser) return;
             
             try {
-                // Guarda en la base de datos pública
-                await setDoc(doc(tasksRef, taskId), { completed: isChecked }, { merge: true });
+                // Guarda en un ÚNICO documento global para que todos vean exactamente lo mismo al instante
+                await setDoc(globalDocRef, { [taskId]: isChecked }, { merge: true });
             } catch (error) {
                 console.error("Error guardando:", error);
-                // Si falla, revertimos
+                // Si falla, revertimos el estado
                 window.updateUITaskState(taskId, !isChecked);
             }
         };
 
         const startFirebaseSync = async () => {
             try {
-                // 1. REGLA OBLIGATORIA: Autenticación ANTES de consultar Firebase
+                // 1. Autenticación silenciosa antes de conectar
                 const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
                 if (token) {
                     await signInWithCustomToken(auth, token);
@@ -372,20 +373,20 @@
 
                 if (!auth.currentUser) throw new Error("No hay usuario");
 
-                // 2. REGLA OBLIGATORIA: Ruta estricta para datos compartidos
-                tasksRef = collection(db, 'artifacts', appId, 'public', 'data', 'tareas_evento');
+                // 2. Ruta estricta para datos compartidos (Un único documento central)
+                globalDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'evento_organizador', 'estado_general');
 
-                // 3. REGLA OBLIGATORIA: Listener directo de toda la colección sin queries complejas
-                onSnapshot(tasksRef, (snapshot) => {
-                    snapshot.docChanges().forEach((change) => {
-                        const taskId = change.doc.id;
-                        const data = change.doc.data();
+                // 3. Listener directo de Firebase al documento completo
+                onSnapshot(globalDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
                         
-                        // Si recibimos un cambio de otro amigo, lo actualizamos localmente
-                        if (localTasks[taskId] !== data.completed) {
-                            window.updateUITaskState(taskId, data.completed);
-                        }
-                    });
+                        // Iteramos sobre todas las tareas guardadas y las aplicamos
+                        Object.keys(data).forEach(taskId => {
+                            const isCompleted = data[taskId] === true; // Nos aseguramos que sea booleano
+                            window.updateUITaskState(taskId, isCompleted);
+                        });
+                    }
                     
                     statusEl.innerText = "Sincronizado ✓";
                     statusEl.classList.remove('text-yellow-400', 'text-red-400');
