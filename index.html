@@ -319,16 +319,22 @@
                 window.updateUITaskState(id, localTasks[id]);
             });
         };
+const appId = 'event-org-app';
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'event-org-app';
-        let firebaseConfig = { projectId: "mock", apiKey: "mock" }; // Fallback seguro
-        if (typeof __firebase_config !== 'undefined') {
-            try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) {}
-        }
+const firebaseConfig = {
+  apiKey: "AIzaSyAsIlCuJ4uRcJdawOmnhe8JVkSlVfyRtQE",
+  authDomain: "interruido.firebaseapp.com",
+  projectId: "interruido",
+  storageBucket: "interruido.firebasestorage.app",
+  messagingSenderId: "762822363943",
+  appId: "1:762822363943:web:f984c2b3ceca7c07577702",
+  measurementId: "G-GVY8TYV8Y0"
+};
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
         
         let globalDocRef = null;
         const statusEl = document.getElementById('sync-status');
