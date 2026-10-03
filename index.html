@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organización Evento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111; /* Dark fallback */
+            color: white;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Backgrounds */
+        .bg-inicio {
+            background-color: #5C1C7E; /* Fallback violet */
+            background-image: url('fondovioleta.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .bg-seccion {
+            background-color: #A6FE0C; /* Fallback green */
+            background-image: url('fondoverde.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* Animations */
+        @keyframes zoomIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .animate-zoom-in {
+            animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .animate-slide-up {
+            opacity: 0;
+            animation: slideUp 0.6s ease-out forwards;
+        }
+
+        /* Staggered delays for home buttons */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+
+        /* Beautiful Image Fallbacks if local PNGs are missing */
+        img {
+            color: transparent; /* Hides alt text initially if image loads */
+            position: relative;
+        }
+        
+        /* When image fails, we apply this class via JS onerror */
+        .image-failed {
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            color: #fff !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            min-height: 100px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Specific styles for the main title fallback */
+        #titulo-img.image-failed {
+            font-size: 3rem;
+            background: linear-gradient(145deg, #d946ef, #9333ea);
+            border-color: #f0abfc;
+            padding: 2rem;
+        }
+
+        /* Custom Large Checkbox for Mobile */
+        .custom-checkbox {
+            appearance: none;
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox::before {
+            content: "";
+            width: 1.2rem;
+            height: 1.2rem;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+            transform: scale(0);
+            background-color: #A6FE0C;
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #A6FE0C;
+        }
+
+        .custom-checkbox:checked {
+            border-color: #A6FE0C;
+            background-color: rgba(74, 222, 128, 0.2);
+        }
+
+        .custom-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        /* Task Row styling */
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        .task-row:active {
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .task-row.completed p {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="pantalla-inicio" class="bg-inicio flex flex-col items-center justify-center min-h-screen p-6 relative">
+        <!-- Title Image -->
+        <div class="w-full max-w-md mb-12">
+            <img src="titulo.png" alt="TÍTULO" id="titulo-img" 
+                 class="w-full h-auto object-contain animate-zoom-in"
+                 onerror="handleImageError(this)">
+        </div>
+
+        <!-- Navigation Buttons Container -->
+        <div class="grid grid-cols-1 gap-4 w-full max-w-sm pb-12">
+            <button onclick="nav('cronograma')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
+                <img src="cronograma.png" alt="CRONOGRAMA" 
+                     class="w-full h-24 object-contain animate-slide-up delay-100"
+                     onerror="handleImageError(this)">
+            </button>
+            <button onclick="nav('tareas')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
+                <img src="tareas.png" alt="TAREAS" 
+                     class="w-full h-24 object-contain animate-slide-up delay-200"
+                     onerror="handleImageError(this)">
+            </button>
+            <button onclick="nav('bandas')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
+                <img src="bandas.png" alt="BANDAS" 
+                     class="w-full h-24 object-contain animate-slide-up delay-300"
+                     onerror="handleImageError(this)">
+            </button>
+            <button onclick="nav('feria')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
+                <img src="feria.png" alt="FERIA" 
+                     class="w-full h-24 object-contain animate-slide-up delay-400"
+                     onerror="handleImageError(this)">
+            </button>
+            <button onclick="nav('expo')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
+                <img src="expo.png" alt="EXPO" 
+                     class="w-full h-24 object-contain animate-slide-up delay-500"
+                     onerror="handleImageError(this)">
+            </button>
+            <button onclick="nav('graff')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
+                <img src="graff.png" alt="GRAFF" 
+                     class="w-full h-24 object-contain animate-slide-up delay-600"
+                     onerror="handleImageError(this)">
+            </button>
+        </div>
+    </div>
+
+    <div id="pantalla-seccion" class="bg-seccion hidden flex-col relative pb-20">
+        <!-- Sticky Back Button -->
+        <div class="sticky top-0 z-50 p-4 bg-green-900/90 backdrop-blur-md shadow-md border-b border-green-700">
+            <button onclick="nav('inicio')" 
+                    class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+               
+            </button>
+        </div>
+
+        <!-- Section Content Area -->
+        <div id="seccion-contenido" class="p-4 w-full max-w-2xl mx-auto flex-grow">
+            <!-- Content injected via JS -->
+        </div>
+        
+        <!-- Connection Status -->
+        <div id="sync-status" class="fixed bottom-2 right-2 text-xs text-white/50 bg-black/50 px-2 py-1 rounded">
+            Conectando...
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Image error handler (attached globally for inline html use)
+        window.handleImageError = function(img) {
+            img.onerror = null; // Prevent infinite loop
+            img.classList.add('image-failed');
+            // If it's a specific image, apply specific text from alt
+            img.innerHTML = img.alt;
+            // Note: Since img tags can't contain HTML text natively in a way that shows reliably when broken in all browsers, 
+            // the CSS pseudo-element trick combined with background works best, or replacing the element.
+            // Let's replace the element to ensure the fallback looks perfect.
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.className = img.className + ' image-failed';
+            fallbackDiv.innerText = img.alt;
+            // keep dimensions if applied
+            fallbackDiv.style.width = img.style.width;
+            fallbackDiv.style.height = img.style.height;
+            img.parentNode.replaceChild(fallbackDiv, img);
+        };
+
+        // Event Data Structure
+        const eventData = {
+            cronograma: {
+                type: 'imageOnly',
+                src: 'crono.png',
+                alt: 'CRONOGRAMA'
+            },
+            tareas: {
+                type: 'groupedTasks',
+                groups: [
+                    { id: 'abril', image: 'abril.png', alt: 'ABRIL', tasks: ['TELA', 'STICKERS', 'LUCES ROSAS', 'ZAPATILLA', 'CINTA', 'TANZA', 'COMPU', 'HDMI', 'CARGADOR'] },
+                    { id: 'oli', image: 'oli.png', alt: 'OLI', tasks: ['CAMARA CON MEMORIA Y BATTERIA', 'VIDEOCAMARA1', 'VIDEOCAMARA2', 'LUZ CAMARA', 'LUZ ROJA', 'LUZ INDIVIDUAL', 'SOPORTE', 'HDMI', 'ADAPTADOR', 'ZAPATILLA', 'ROPASUPLICIA'] },
+                    { id: 'zeki', image: 'zeki.png', alt: 'ZEKI', tasks: ['TELEVISORES', 'EXPO', 'TIJERA', 'TANZ', 'ZAPATILLA'] },
+                    { id: 'ari', image: 'ari.png', alt: 'ARI', tasks: ['IMPRESION'] }
+                ]
+            },
+            bandas: {
+                type: 'groupedTasks',
+                groups: [
+                    { id: 'suplicia', image: 'suplicia.png', alt: 'SUPLICIA', tasks: ['PRUEBA DE SONIDO', 'CABLES', 'VESTIMENTA', 'VOZ', 'BAJO', 'GUITARRA', 'GUITARRA', 'BATA'] },
+                    { id: 'crisis', image: 'crisis.png', alt: 'CRISIS', tasks: ['TRAJO BATA', 'PRUEBA DE SONIDO', 'VOZ', 'GUITARRA', 'BAJO', 'BATA'] },
+                    { id: 'rodo', image: 'rodo.png', alt: 'RODO', tasks: ['PIE DE MIC', 'GUITARRA', 'VOZ1', 'VOZ2', 'VOZ3', 'GUITARRA', 'BAJO', 'BATA', 'TECLADO'] },
+                    { id: 'sonido', image: 'sonido.png', alt: 'SONIDO', tasks: ['CABLES', 'CONSOLA', 'PARLANTES GRANDES', 'PARLANTE RETORNO'] }
+                ]
+            },
+            expo: {
+                type: 'singleList',
+                tasks: ['MONTAJE SANTI', 'MONTAJE ZEKI', 'MONTAJE 9NUEVE', 'MONTAJE AGUSTINTA']
+            },
+            feria: {
+                type: 'singleList',
+                tasks: ['MONTAJE DRAMATIZA', 'MONTAJE TRINA', 'MONTAJE GORDOPILCHA', 'MONTAJE TELA MUTA']
+            },
+            graff: {
+                type: 'singleList',
+                tasks: ['MONTAJE SORPOTE', 'APARICION JUANA', 'LATAS']
+            }
+        };
+
+        // Firebase Setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'evento-amigos-app';
+        let firebaseConfig;
+        
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                // Mock config to prevent crash if not in expected environment
+                projectId: "mock-project",
+                apiKey: "mock-key"
+            };
+        } catch (e) {
+            console.error("Firebase config parsing error", e);
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let isConnected = false;
+        let currentSection = 'inicio';
+        
+        // References
+        const refInicio = document.getElementById('pantalla-inicio');
+        const refSeccion = document.getElementById('pantalla-seccion');
+        const refContenido = document.getElementById('seccion-contenido');
+        const statusEl = document.getElementById('sync-status');
+
+        // Helper to generate a safe ID for Firebase documents
+        const generateTaskId = (section, group, taskName) => {
+            const clean = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            return `${clean(section)}_${group ? clean(group) : 'main'}_${clean(taskName)}`;
+        };
+
+        // Render Functions
+        const renderTaskRow = (taskId, taskName) => {
+            return `
+                <label class="task-row" id="row-${taskId}" for="${taskId}">
+                    <input type="checkbox" id="${taskId}" class="custom-checkbox" 
+                           onchange="window.toggleTask('${taskId}', this.checked)">
+                    <p class="text-lg font-bold flex-1 select-none leading-tight">${taskName}</p>
+                </label>
+            `;
+        };
+
+        const renderGroup = (sectionId, group) => {
+            let html = `
+                <div class="mb-10 bg-black/20 p-4 rounded-2xl border border-white/10 shadow-lg">
+                    <div class="mb-6 flex justify-center">
+                        <img src="${group.image}" alt="${group.alt}" class="w-full max-w-sm h-32 object-contain" onerror="handleImageError(this)">
+                    </div>
+                    <div class="flex flex-col">
+            `;
+            group.tasks.forEach(task => {
+                const taskId = generateTaskId(sectionId, group.id, task);
+                html += renderTaskRow(taskId, task);
+            });
+            html += `</div></div>`;
+            return html;
+        };
+
+        const loadSectionContent = (sectionId) => {
+            const data = eventData[sectionId];
+            if (!data) return;
+
+            let html = '';
+            
+            if (data.type === 'imageOnly') {
+                html = `<img src="${data.src}" alt="${data.alt}" class="w-full h-auto object-contain rounded-xl shadow-2xl" onerror="handleImageError(this)">`;
+            } 
+            else if (data.type === 'groupedTasks') {
+                data.groups.forEach(group => {
+                    html += renderGroup(sectionId, group);
+                });
+            }
+            else if (data.type === 'singleList') {
+                html = `<div class="bg-black/20 p-4 rounded-2xl border border-white/10 shadow-lg mt-4"><div class="flex flex-col">`;
+                data.tasks.forEach(task => {
+                    const taskId = generateTaskId(sectionId, 'list', task);
+                    html += renderTaskRow(taskId, task);
+                });
+                html += `</div></div>`;
+            }
+
+            refContenido.innerHTML = html;
+            
+            // Re-apply current state from Firebase if already loaded
+            applyCurrentStateToUI();
+        };
+
+        // Navigation
+        window.nav = (sectionId) => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            currentSection = sectionId;
+
+            if (sectionId === 'inicio') {
+                refInicio.classList.remove('hidden');
+                refInicio.classList.add('flex');
+                refSeccion.classList.add('hidden');
+                refSeccion.classList.remove('flex');
+            } else {
+                refInicio.classList.add('hidden');
+                refInicio.classList.remove('flex');
+                refSeccion.classList.remove('hidden');
+                refSeccion.classList.add('flex');
+                loadSectionContent(sectionId);
+            }
+        };
+
+        // Firebase Sync Logic
+        let localTaskState = {};
+        let tasksCollectionRef;
+
+        const applyCurrentStateToUI = () => {
+            Object.keys(localTaskState).forEach(taskId => {
+                const checkbox = document.getElementById(taskId);
+                const row = document.getElementById(`row-${taskId}`);
+                const isChecked = localTaskState[taskId];
+                
+                if (checkbox) checkbox.checked = isChecked;
+                if (row) {
+                    if (isChecked) row.classList.add('completed');
+                    else row.classList.remove('completed');
+                }
+            });
+        };
+
+        window.toggleTask = async (taskId, isChecked) => {
+            // Optimistic UI update
+            const row = document.getElementById(`row-${taskId}`);
+            if (row) {
+                if (isChecked) row.classList.add('completed');
+                else row.classList.remove('completed');
+            }
+
+            if (!isConnected || !tasksCollectionRef) return;
+            
+            try {
+                const docRef = doc(tasksCollectionRef, taskId);
+                await setDoc(docRef, { checked: isChecked }, { merge: true });
+            } catch (error) {
+                console.error("Error saving task:", error);
+                // Revert UI on error
+                const checkbox = document.getElementById(taskId);
+                if (checkbox) checkbox.checked = !isChecked;
+                if (row) {
+                    if (!isChecked) row.classList.add('completed');
+                    else row.classList.remove('completed');
+                }
+            }
+        };
+
+        const initApp = async () => {
+            try {
+                // Auth Rule 3: Auth Before Queries
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (token) {
+                    await signInWithCustomToken(auth, token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                if (!auth.currentUser) throw new Error("Auth failed");
+
+                statusEl.innerText = "Online ✓";
+                statusEl.classList.add('text-green-400');
+                isConnected = true;
+
+                // Path Rule 1: Strict Paths for public collaborative data
+                tasksCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'event_tasks');
+
+                // Path Rule 2: Simple query, listen to entire collection
+                onSnapshot(tasksCollectionRef, (snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        const taskId = change.doc.id;
+                        const data = change.doc.data();
+                        
+                        // Update local state
+                        localTaskState[taskId] = data.checked || false;
+                    });
+                    
+                    // Update DOM based on new state
+                    applyCurrentStateToUI();
+                    
+                }, (error) => {
+                    console.error("Snapshot listener error:", error);
+                    statusEl.innerText = "Desconectado";
+                    statusEl.classList.remove('text-green-400');
+                    statusEl.classList.add('text-red-400');
+                });
+
+            } catch (error) {
+                console.error("Initialization error:", error);
+                statusEl.innerText = "Modo Local (Error Nube)";
+            }
+        };
+
+        // Start App
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            
+            // Re-trigger animations if returning to home
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if(mutation.target.id === 'pantalla-inicio' && !mutation.target.classList.contains('hidden')){
+                        const imgs = document.querySelectorAll('#pantalla-inicio img');
+                        imgs.forEach(img => {
+                            img.style.animation = 'none';
+                            img.offsetHeight; /* trigger reflow */
+                            img.style.animation = null; 
+                        });
+                    }
+                });
+            });
+            observer.observe(refInicio, { attributes: true, attributeFilter: ['class'] });
+        });
+
+    </script>
+</body>
+</html>
