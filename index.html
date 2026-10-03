@@ -2,61 +2,55 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organización Evento</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>INTERMIAU CRONOGRAMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #111; /* Dark fallback */
+            background-color: #111;
             color: white;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Backgrounds */
+        /* Fondos solicitados */
         .bg-inicio {
-            background-color: #5C1C7E; /* Fallback violet */
+            background-color: #5C1C7E;
             background-image: url('fondovioleta.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             min-height: 100vh;
+            width: 100%;
         }
 
         .bg-seccion {
-            background-color: #A6FE0C; /* Fallback green */
+            background-color: #A6FE0C;
             background-image: url('fondoverde.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             min-height: 100vh;
+            width: 100%;
         }
 
-        /* Animations */
+        /* Animaciones */
         @keyframes zoomIn {
-            0% { transform: scale(0); opacity: 0; }
-            80% { transform: scale(1.1); }
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.05); }
             100% { transform: scale(1); opacity: 1; }
         }
 
         @keyframes slideUp {
-            0% { transform: translateY(100px); opacity: 0; }
+            0% { transform: translateY(50px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        .animate-zoom-in {
-            animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        .animate-slide-up {
-            opacity: 0;
-            animation: slideUp 0.6s ease-out forwards;
-        }
-
-        /* Staggered delays for home buttons */
+        .animate-zoom-in { animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-slide-up { opacity: 0; animation: slideUp 0.5s ease-out forwards; }
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
@@ -64,47 +58,45 @@
         .delay-500 { animation-delay: 0.5s; }
         .delay-600 { animation-delay: 0.6s; }
 
-        /* Beautiful Image Fallbacks if local PNGs are missing */
-        img {
-            color: transparent; /* Hides alt text initially if image loads */
-            position: relative;
-        }
+        /* Fallbacks hermosos si las imágenes no cargan */
+        img { color: transparent; position: relative; }
         
-        /* When image fails, we apply this class via JS onerror */
         .image-failed {
-            background: linear-gradient(145deg, #2d3748, #1a202c);
-            color: #fff !important;
+            background: linear-gradient(145deg, #1f2937, #111827);
+            color: #A6FE0C !important;
             display: flex !important;
             align-items: center;
             justify-content: center;
             text-align: center;
             font-weight: 900;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border: 4px solid rgba(255,255,255,0.1);
+            letter-spacing: 0.1em;
+            border: 2px solid rgba(166, 254, 12, 0.3);
             border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
             min-height: 100px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            width: 100%;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* Specific styles for the main title fallback */
         #titulo-img.image-failed {
-            font-size: 3rem;
-            background: linear-gradient(145deg, #d946ef, #9333ea);
-            border-color: #f0abfc;
-            padding: 2rem;
+            font-size: 2.5rem;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            color: white !important;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        /* Custom Large Checkbox for Mobile */
+        /* Custom Checkbox */
         .custom-checkbox {
             appearance: none;
             width: 2rem;
             height: 2rem;
             border: 3px solid #cbd5e1;
             border-radius: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.2);
             display: grid;
             place-content: center;
             cursor: pointer;
@@ -125,98 +117,82 @@
 
         .custom-checkbox:checked {
             border-color: #A6FE0C;
-            background-color: rgba(74, 222, 128, 0.2);
+            background-color: rgba(166, 254, 12, 0.1);
         }
 
-        .custom-checkbox:checked::before {
-            transform: scale(1);
-        }
+        .custom-checkbox:checked::before { transform: scale(1); }
 
-        /* Task Row styling */
+        /* Fila de tarea */
         .task-row {
             display: flex;
             align-items: center;
             gap: 1rem;
             padding: 1rem;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 0.75rem;
             margin-bottom: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: background 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
         }
-        .task-row:active {
-            background: rgba(0, 0, 0, 0.6);
-        }
+        
+        .task-row:active { transform: scale(0.98); }
+        
         .task-row.completed p {
             text-decoration: line-through;
-            color: #9ca3af;
+            color: #6b7280; /* Gris apagado */
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
 
-    <div id="pantalla-inicio" class="bg-inicio flex flex-col items-center justify-center min-h-screen p-6 relative">
-        <!-- Title Image -->
-        <div class="w-full max-w-md mb-12">
-            <img src="titulo.png" alt="TÍTULO" id="titulo-img" 
-                 class="w-full h-auto object-contain animate-zoom-in"
-                 onerror="handleImageError(this)">
+    <!-- VISTA INICIO -->
+    <div id="pantalla-inicio" class="bg-inicio flex flex-col items-center pt-12 pb-12 px-6 relative">
+        <div class="w-full max-w-sm mb-12 mt-4">
+            <img src="titulo.png" alt="EVENTO" id="titulo-img" 
+                 class="w-full h-32 object-contain animate-zoom-in drop-shadow-2xl"
+                 onerror="window.handleImageError(this)">
         </div>
 
-        <!-- Navigation Buttons Container -->
-        <div class="grid grid-cols-1 gap-4 w-full max-w-sm pb-12">
+        <div class="grid grid-cols-1 gap-5 w-full max-w-sm">
             <button onclick="nav('cronograma')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
-                <img src="cronograma.png" alt="CRONOGRAMA" 
-                     class="w-full h-24 object-contain animate-slide-up delay-100"
-                     onerror="handleImageError(this)">
+                <img src="cronograma.png" alt="CRONOGRAMA" class="w-full h-24 object-contain animate-slide-up delay-100" onerror="window.handleImageError(this)">
             </button>
             <button onclick="nav('tareas')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
-                <img src="tareas.png" alt="TAREAS" 
-                     class="w-full h-24 object-contain animate-slide-up delay-200"
-                     onerror="handleImageError(this)">
+                <img src="tareas.png" alt="TAREAS" class="w-full h-24 object-contain animate-slide-up delay-200" onerror="window.handleImageError(this)">
             </button>
             <button onclick="nav('bandas')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
-                <img src="bandas.png" alt="BANDAS" 
-                     class="w-full h-24 object-contain animate-slide-up delay-300"
-                     onerror="handleImageError(this)">
+                <img src="bandas.png" alt="BANDAS" class="w-full h-24 object-contain animate-slide-up delay-300" onerror="window.handleImageError(this)">
             </button>
             <button onclick="nav('feria')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
-                <img src="feria.png" alt="FERIA" 
-                     class="w-full h-24 object-contain animate-slide-up delay-400"
-                     onerror="handleImageError(this)">
+                <img src="feria.png" alt="FERIA" class="w-full h-24 object-contain animate-slide-up delay-400" onerror="window.handleImageError(this)">
             </button>
             <button onclick="nav('expo')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
-                <img src="expo.png" alt="EXPO" 
-                     class="w-full h-24 object-contain animate-slide-up delay-500"
-                     onerror="handleImageError(this)">
+                <img src="expo.png" alt="EXPO" class="w-full h-24 object-contain animate-slide-up delay-500" onerror="window.handleImageError(this)">
             </button>
             <button onclick="nav('graff')" class="w-full focus:outline-none transform active:scale-95 transition-transform">
-                <img src="graff.png" alt="GRAFF" 
-                     class="w-full h-24 object-contain animate-slide-up delay-600"
-                     onerror="handleImageError(this)">
+                <img src="graff.png" alt="GRAFF" class="w-full h-24 object-contain animate-slide-up delay-600" onerror="window.handleImageError(this)">
             </button>
         </div>
     </div>
 
-    <div id="pantalla-seccion" class="bg-seccion hidden flex-col relative pb-20">
-        <!-- Sticky Back Button -->
-        <div class="sticky top-0 z-50 p-4 bg-green-900/90 backdrop-blur-md shadow-md border-b border-green-700">
-            <button onclick="nav('inicio')" 
-                    class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    <!-- VISTA SECCIÓN -->
+    <div id="pantalla-seccion" class="bg-seccion hidden flex-col relative pb-20 pt-20">
+        <!-- Botón Volver (Flecha Flotante Exacta) -->
+        <div class="fixed top-4 left-4 z-50">
+            <button onclick="nav('inicio')" class="focus:outline-none transform active:scale-90 transition-transform p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="#A6FE0C" style="filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.9)) drop-shadow(0px 0px 3px rgba(0,0,0,1)); stroke-width: 3.5;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-               
             </button>
         </div>
 
-        <!-- Section Content Area -->
-        <div id="seccion-contenido" class="p-4 w-full max-w-2xl mx-auto flex-grow">
-            <!-- Content injected via JS -->
+        <div id="seccion-contenido" class="p-4 w-full max-w-2xl mx-auto flex-grow mt-4">
+            <!-- El contenido de las listas se inyecta aquí con JS -->
         </div>
         
-        <!-- Connection Status -->
-        <div id="sync-status" class="fixed bottom-2 right-2 text-xs text-white/50 bg-black/50 px-2 py-1 rounded">
+        <!-- Estado de Sincronización -->
+        <div id="sync-status" class="fixed bottom-2 right-2 text-[10px] font-bold text-white bg-black/70 px-2 py-1 rounded">
             Conectando...
         </div>
     </div>
@@ -226,42 +202,28 @@
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Image error handler (attached globally for inline html use)
+        // Fallback de imágenes
         window.handleImageError = function(img) {
-            img.onerror = null; // Prevent infinite loop
-            img.classList.add('image-failed');
-            // If it's a specific image, apply specific text from alt
-            img.innerHTML = img.alt;
-            // Note: Since img tags can't contain HTML text natively in a way that shows reliably when broken in all browsers, 
-            // the CSS pseudo-element trick combined with background works best, or replacing the element.
-            // Let's replace the element to ensure the fallback looks perfect.
+            img.onerror = null;
             const fallbackDiv = document.createElement('div');
             fallbackDiv.className = img.className + ' image-failed';
             fallbackDiv.innerText = img.alt;
-            // keep dimensions if applied
-            fallbackDiv.style.width = img.style.width;
-            fallbackDiv.style.height = img.style.height;
             img.parentNode.replaceChild(fallbackDiv, img);
         };
 
-        // Event Data Structure
-        const eventData = {
-            cronograma: {
-                type: 'imageOnly',
-                src: 'crono.png',
-                alt: 'CRONOGRAMA'
-            },
+        const EVENT_DATA = {
+            cronograma: { type: 'imageOnly', src: 'crono.png', alt: 'CRONOGRAMA' },
             tareas: {
-                type: 'groupedTasks',
+                type: 'grouped',
                 groups: [
                     { id: 'abril', image: 'abril.png', alt: 'ABRIL', tasks: ['TELA', 'STICKERS', 'LUCES ROSAS', 'ZAPATILLA', 'CINTA', 'TANZA', 'COMPU', 'HDMI', 'CARGADOR'] },
-                    { id: 'oli', image: 'oli.png', alt: 'OLI', tasks: ['CAMARA CON MEMORIA Y BATTERIA', 'VIDEOCAMARA1', 'VIDEOCAMARA2', 'LUZ CAMARA', 'LUZ ROJA', 'LUZ INDIVIDUAL', 'SOPORTE', 'HDMI', 'ADAPTADOR', 'ZAPATILLA', 'ROPASUPLICIA'] },
+                    { id: 'oli', image: 'oli.png', alt: 'OLI', tasks: ['CAMARA CON MEMORIA Y BATERIA', 'VIDEOCAMARA1', 'VIDEOCAMARA2', 'LUZ CAMARA', 'LUZ ROJA', 'LUZ INDIVIDUAL', 'SOPORTE', 'HDMI', 'ADAPTADOR', 'ZAPATILLA', 'ROPASUPLICIA'] },
                     { id: 'zeki', image: 'zeki.png', alt: 'ZEKI', tasks: ['TELEVISORES', 'EXPO', 'TIJERA', 'TANZ', 'ZAPATILLA'] },
                     { id: 'ari', image: 'ari.png', alt: 'ARI', tasks: ['IMPRESION'] }
                 ]
             },
             bandas: {
-                type: 'groupedTasks',
+                type: 'grouped',
                 groups: [
                     { id: 'suplicia', image: 'suplicia.png', alt: 'SUPLICIA', tasks: ['PRUEBA DE SONIDO', 'CABLES', 'VESTIMENTA', 'VOZ', 'BAJO', 'GUITARRA', 'GUITARRA', 'BATA'] },
                     { id: 'crisis', image: 'crisis.png', alt: 'CRISIS', tasks: ['TRAJO BATA', 'PRUEBA DE SONIDO', 'VOZ', 'GUITARRA', 'BAJO', 'BATA'] },
@@ -269,174 +231,138 @@
                     { id: 'sonido', image: 'sonido.png', alt: 'SONIDO', tasks: ['CABLES', 'CONSOLA', 'PARLANTES GRANDES', 'PARLANTE RETORNO'] }
                 ]
             },
-            expo: {
-                type: 'singleList',
-                tasks: ['MONTAJE SANTI', 'MONTAJE ZEKI', 'MONTAJE 9NUEVE', 'MONTAJE AGUSTINTA']
-            },
-            feria: {
-                type: 'singleList',
-                tasks: ['MONTAJE DRAMATIZA', 'MONTAJE TRINA', 'MONTAJE GORDOPILCHA', 'MONTAJE TELA MUTA']
-            },
-            graff: {
-                type: 'singleList',
-                tasks: ['MONTAJE SORPOTE', 'APARICION JUANA', 'LATAS']
-            }
+            expo: { type: 'single', tasks: ['MONTAJE SANTI', 'MONTAJE ZEKI', 'MONTAJE 9NUEVE', 'MONTAJE AGUSTINTA'] },
+            feria: { type: 'single', tasks: ['MONTAJE DRAMATIZA', 'MONTAJE TRINA', 'MONTAJE GORDOPILCHA', 'MONTAJE TELA MUTA'] },
+            graff: { type: 'single', tasks: ['MONTAJE SORPOTE', 'APARICION JUANA', 'LATAS'] }
         };
 
-        // Firebase Setup
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'evento-amigos-app';
-        let firebaseConfig;
+        // Generador de IDs seguros para Firebase (sin espacios ni caracteres raros)
+        const safeId = (str) => {
+            // Reemplaza acentos y caracteres especiales
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '_');
+        };
         
-        try {
-            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-                // Mock config to prevent crash if not in expected environment
-                projectId: "mock-project",
-                apiKey: "mock-key"
-            };
-        } catch (e) {
-            console.error("Firebase config parsing error", e);
-        }
+        const getFirebaseId = (section, group, task) => {
+            return `chk_${safeId(section)}_${safeId(group || 'list')}_${safeId(task)}`.substring(0, 100); // Max 100 chars
+        };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        
-        let isConnected = false;
-        let currentSection = 'inicio';
-        
-        // References
         const refInicio = document.getElementById('pantalla-inicio');
         const refSeccion = document.getElementById('pantalla-seccion');
         const refContenido = document.getElementById('seccion-contenido');
-        const statusEl = document.getElementById('sync-status');
+        
+        // Estado local de tareas
+        let localTasks = {};
 
-        // Helper to generate a safe ID for Firebase documents
-        const generateTaskId = (section, group, taskName) => {
-            const clean = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            return `${clean(section)}_${group ? clean(group) : 'main'}_${clean(taskName)}`;
-        };
-
-        // Render Functions
-        const renderTaskRow = (taskId, taskName) => {
-            return `
-                <label class="task-row" id="row-${taskId}" for="${taskId}">
-                    <input type="checkbox" id="${taskId}" class="custom-checkbox" 
-                           onchange="window.toggleTask('${taskId}', this.checked)">
-                    <p class="text-lg font-bold flex-1 select-none leading-tight">${taskName}</p>
-                </label>
-            `;
-        };
-
-        const renderGroup = (sectionId, group) => {
-            let html = `
-                <div class="mb-10 bg-black/20 p-4 rounded-2xl border border-white/10 shadow-lg">
-                    <div class="mb-6 flex justify-center">
-                        <img src="${group.image}" alt="${group.alt}" class="w-full max-w-sm h-32 object-contain" onerror="handleImageError(this)">
-                    </div>
-                    <div class="flex flex-col">
-            `;
-            group.tasks.forEach(task => {
-                const taskId = generateTaskId(sectionId, group.id, task);
-                html += renderTaskRow(taskId, task);
-            });
-            html += `</div></div>`;
-            return html;
-        };
-
-        const loadSectionContent = (sectionId) => {
-            const data = eventData[sectionId];
-            if (!data) return;
-
-            let html = '';
-            
-            if (data.type === 'imageOnly') {
-                html = `<img src="${data.src}" alt="${data.alt}" class="w-full h-auto object-contain rounded-xl shadow-2xl" onerror="handleImageError(this)">`;
-            } 
-            else if (data.type === 'groupedTasks') {
-                data.groups.forEach(group => {
-                    html += renderGroup(sectionId, group);
-                });
-            }
-            else if (data.type === 'singleList') {
-                html = `<div class="bg-black/20 p-4 rounded-2xl border border-white/10 shadow-lg mt-4"><div class="flex flex-col">`;
-                data.tasks.forEach(task => {
-                    const taskId = generateTaskId(sectionId, 'list', task);
-                    html += renderTaskRow(taskId, task);
-                });
-                html += `</div></div>`;
-            }
-
-            refContenido.innerHTML = html;
-            
-            // Re-apply current state from Firebase if already loaded
-            applyCurrentStateToUI();
-        };
-
-        // Navigation
         window.nav = (sectionId) => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            currentSection = sectionId;
-
+            window.scrollTo(0, 0);
             if (sectionId === 'inicio') {
                 refInicio.classList.remove('hidden');
                 refInicio.classList.add('flex');
                 refSeccion.classList.add('hidden');
                 refSeccion.classList.remove('flex');
             } else {
+                renderSection(sectionId);
                 refInicio.classList.add('hidden');
                 refInicio.classList.remove('flex');
                 refSeccion.classList.remove('hidden');
                 refSeccion.classList.add('flex');
-                loadSectionContent(sectionId);
             }
         };
 
-        // Firebase Sync Logic
-        let localTaskState = {};
-        let tasksCollectionRef;
+        const renderTaskHtml = (taskId, taskName) => `
+            <label class="task-row" id="row-${taskId}" for="${taskId}">
+                <input type="checkbox" id="${taskId}" class="custom-checkbox" 
+                       onchange="window.toggleTask('${taskId}', this.checked)">
+                <p class="text-base font-bold flex-1 select-none leading-tight tracking-wide">${taskName}</p>
+            </label>
+        `;
 
-        const applyCurrentStateToUI = () => {
-            Object.keys(localTaskState).forEach(taskId => {
-                const checkbox = document.getElementById(taskId);
-                const row = document.getElementById(`row-${taskId}`);
-                const isChecked = localTaskState[taskId];
-                
-                if (checkbox) checkbox.checked = isChecked;
-                if (row) {
-                    if (isChecked) row.classList.add('completed');
-                    else row.classList.remove('completed');
-                }
+        const renderSection = (sectionId) => {
+            const data = EVENT_DATA[sectionId];
+            if (!data) return;
+
+            let html = '';
+            
+            if (data.type === 'imageOnly') {
+                html = `<img src="${data.src}" alt="${data.alt}" class="w-full h-auto object-contain rounded-xl shadow-2xl mt-4 border-4 border-black/50" onerror="window.handleImageError(this)">`;
+            } 
+            else if (data.type === 'grouped') {
+                data.groups.forEach(group => {
+                    html += `
+                    <div class="mb-10 bg-black/80 p-5 rounded-3xl shadow-2xl border border-white/20">
+                        <div class="mb-6 flex justify-center">
+                            <img src="${group.image}" alt="${group.alt}" class="w-full max-w-[200px] h-24 object-contain" onerror="window.handleImageError(this)">
+                        </div>
+                        <div class="flex flex-col">`;
+                    
+                    group.tasks.forEach(task => {
+                        const taskId = getFirebaseId(sectionId, group.id, task);
+                        html += renderTaskHtml(taskId, task);
+                    });
+                    
+                    html += `</div></div>`;
+                });
+            }
+            else if (data.type === 'single') {
+                html = `<div class="bg-black/80 p-5 rounded-3xl shadow-2xl border border-white/20 mt-4"><div class="flex flex-col">`;
+                data.tasks.forEach(task => {
+                    const taskId = getFirebaseId(sectionId, 'list', task);
+                    html += renderTaskHtml(taskId, task);
+                });
+                html += `</div></div>`;
+            }
+
+            refContenido.innerHTML = html;
+            
+            // Aplicar el estado actual a los nuevos elementos del DOM
+            Object.keys(localTasks).forEach(id => {
+                window.updateUITaskState(id, localTasks[id]);
             });
         };
 
-        window.toggleTask = async (taskId, isChecked) => {
-            // Optimistic UI update
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'event-org-app';
+        let firebaseConfig = { projectId: "mock", apiKey: "mock" }; // Fallback seguro
+        if (typeof __firebase_config !== 'undefined') {
+            try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) {}
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let tasksRef = null;
+        const statusEl = document.getElementById('sync-status');
+
+        window.updateUITaskState = (taskId, isChecked) => {
+            localTasks[taskId] = isChecked;
+            const checkbox = document.getElementById(taskId);
             const row = document.getElementById(`row-${taskId}`);
+            
+            if (checkbox) checkbox.checked = isChecked;
             if (row) {
                 if (isChecked) row.classList.add('completed');
                 else row.classList.remove('completed');
             }
+        };
 
-            if (!isConnected || !tasksCollectionRef) return;
+        window.toggleTask = async (taskId, isChecked) => {
+            // Actualización optimista (inmediata en la pantalla)
+            window.updateUITaskState(taskId, isChecked);
+
+            if (!tasksRef || !auth.currentUser) return;
             
             try {
-                const docRef = doc(tasksCollectionRef, taskId);
-                await setDoc(docRef, { checked: isChecked }, { merge: true });
+                // Guarda en la base de datos pública
+                await setDoc(doc(tasksRef, taskId), { completed: isChecked }, { merge: true });
             } catch (error) {
-                console.error("Error saving task:", error);
-                // Revert UI on error
-                const checkbox = document.getElementById(taskId);
-                if (checkbox) checkbox.checked = !isChecked;
-                if (row) {
-                    if (!isChecked) row.classList.add('completed');
-                    else row.classList.remove('completed');
-                }
+                console.error("Error guardando:", error);
+                // Si falla, revertimos
+                window.updateUITaskState(taskId, !isChecked);
             }
         };
 
-        const initApp = async () => {
+        const startFirebaseSync = async () => {
             try {
-                // Auth Rule 3: Auth Before Queries
+                // 1. REGLA OBLIGATORIA: Autenticación ANTES de consultar Firebase
                 const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
                 if (token) {
                     await signInWithCustomToken(auth, token);
@@ -444,59 +370,42 @@
                     await signInAnonymously(auth);
                 }
 
-                if (!auth.currentUser) throw new Error("Auth failed");
+                if (!auth.currentUser) throw new Error("No hay usuario");
 
-                statusEl.innerText = "Online ✓";
-                statusEl.classList.add('text-green-400');
-                isConnected = true;
+                // 2. REGLA OBLIGATORIA: Ruta estricta para datos compartidos
+                tasksRef = collection(db, 'artifacts', appId, 'public', 'data', 'tareas_evento');
 
-                // Path Rule 1: Strict Paths for public collaborative data
-                tasksCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'event_tasks');
-
-                // Path Rule 2: Simple query, listen to entire collection
-                onSnapshot(tasksCollectionRef, (snapshot) => {
+                // 3. REGLA OBLIGATORIA: Listener directo de toda la colección sin queries complejas
+                onSnapshot(tasksRef, (snapshot) => {
                     snapshot.docChanges().forEach((change) => {
                         const taskId = change.doc.id;
                         const data = change.doc.data();
                         
-                        // Update local state
-                        localTaskState[taskId] = data.checked || false;
+                        // Si recibimos un cambio de otro amigo, lo actualizamos localmente
+                        if (localTasks[taskId] !== data.completed) {
+                            window.updateUITaskState(taskId, data.completed);
+                        }
                     });
                     
-                    // Update DOM based on new state
-                    applyCurrentStateToUI();
+                    statusEl.innerText = "Sincronizado ✓";
+                    statusEl.classList.remove('text-yellow-400', 'text-red-400');
+                    statusEl.classList.add('text-green-400');
                     
                 }, (error) => {
-                    console.error("Snapshot listener error:", error);
+                    console.error("Error de conexión:", error);
                     statusEl.innerText = "Desconectado";
-                    statusEl.classList.remove('text-green-400');
                     statusEl.classList.add('text-red-400');
                 });
 
             } catch (error) {
-                console.error("Initialization error:", error);
-                statusEl.innerText = "Modo Local (Error Nube)";
+                console.error("Fallo la inicialización de Firebase", error);
+                statusEl.innerText = "Modo Local";
+                statusEl.classList.add('text-yellow-400');
             }
         };
 
-        // Start App
         window.addEventListener('DOMContentLoaded', () => {
-            initApp();
-            
-            // Re-trigger animations if returning to home
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if(mutation.target.id === 'pantalla-inicio' && !mutation.target.classList.contains('hidden')){
-                        const imgs = document.querySelectorAll('#pantalla-inicio img');
-                        imgs.forEach(img => {
-                            img.style.animation = 'none';
-                            img.offsetHeight; /* trigger reflow */
-                            img.style.animation = null; 
-                        });
-                    }
-                });
-            });
-            observer.observe(refInicio, { attributes: true, attributeFilter: ['class'] });
+            startFirebaseSync();
         });
 
     </script>
